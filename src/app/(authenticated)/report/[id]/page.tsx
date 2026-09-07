@@ -32,8 +32,8 @@ export default function ReportDetailPage() {
       .catch(() => setLoading(false));
   }, [params.id]);
 
-  if (loading) return <div className="text-center py-12 text-gray-500">載入中...</div>;
-  if (!interview) return <div className="text-center py-12 text-gray-500">找不到面試紀錄</div>;
+  if (loading) return <div className="text-center py-12 text-slate-500">載入中...</div>;
+  if (!interview) return <div className="text-center py-12 text-slate-500">找不到面試紀錄</div>;
 
   const radarData = [
     { subject: '表達自信', value: interview.radar_confidence, fullMark: 100 },
@@ -63,7 +63,7 @@ export default function ReportDetailPage() {
               <div className="mb-3">
                 <Badge variant={interview.status === 'passed' ? 'success' : 'danger'}>{interview.status === 'passed' ? '通過' : '未通過'}</Badge>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed">{interview.summary || '評分資料尚未產生。'}</p>
+              <p className="text-sm text-slate-600 leading-relaxed">{interview.summary || '評分資料尚未產生。'}</p>
             </div>
           </div>
         </Card>
@@ -77,16 +77,30 @@ export default function ReportDetailPage() {
               <Radar name="能力" dataKey="value" stroke="#0d9488" fill="#0d9488" fillOpacity={0.2} strokeWidth={2} />
             </RadarChart>
           </ResponsiveContainer>
+          {/* Text alternative for screen readers / non-visual access */}
+          <ul className="sr-only">
+            {radarData.map((d) => (
+              <li key={d.subject}>{d.subject}：{d.value} / {d.fullMark} 分</li>
+            ))}
+          </ul>
+          <dl className="grid grid-cols-3 gap-2 mt-2 text-center" aria-hidden="true">
+            {radarData.map((d) => (
+              <div key={d.subject}>
+                <dt className="text-xs text-slate-500">{d.subject}</dt>
+                <dd className="text-sm font-semibold text-slate-800">{d.value}</dd>
+              </div>
+            ))}
+          </dl>
         </Card>
       </div>
       {/* Interview info */}
-      <div className="flex gap-6 mb-6 text-sm text-gray-600">
+      <div className="flex gap-6 mb-6 text-sm text-slate-600">
         <span><strong>應徵職缺：</strong>{interview.position}</span>
         <span><strong>面試時間：</strong>{formatDate(interview.started_at)}</span>
       </div>
       {/* Questions */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">面試問答詳情分析</h2>
+        <h2 className="text-lg font-semibold text-slate-900">面試問答詳情分析</h2>
         {questions.map(q => (
           <Card key={q.id}>
             <div className="flex items-start gap-4">
@@ -98,9 +112,9 @@ export default function ReportDetailPage() {
                   <h3 className="font-semibold text-teal-700">{q.question_text}</h3>
                   <span className="text-orange-500 font-semibold text-sm whitespace-nowrap ml-4">單題評分：{q.score}</span>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 mb-2">語音辨識逐字稿：</p>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{q.transcript || '(未作答)'}</p>
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <p className="text-xs font-medium text-slate-500 mb-2">語音辨識逐字稿：</p>
+                  <p className="text-sm text-slate-700 whitespace-pre-wrap">{q.transcript || '(未作答)'}</p>
                 </div>
               </div>
             </div>

@@ -23,7 +23,7 @@ export default function DashboardPage() {
     fetch('/api/admin/dashboard').then(r => r.json()).then(setData).catch(() => {});
   }, []);
 
-  if (!data) return <div className="text-center py-12 text-gray-500">載入中...</div>;
+  if (!data) return <div className="text-center py-12 text-slate-500">載入中...</div>;
 
   const userDist = data.userDistribution.map(d => ({ name: d.role === 'admin' ? '管理員' : '一般應試者', value: d.count }));
   const scoreDist = data.scoreDistribution.map(d => ({ ...d, fill: SCORE_COLORS[d.level] || '#9ca3af' }));
@@ -31,8 +31,8 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">系統營運總覽</h1>
-        <p className="text-gray-500 mt-1">檢視平台所有面試活動、活躍使用者與系統健康度。（僅管理員可存取）</p>
+        <h1 className="text-2xl font-bold text-slate-900">系統營運總覽</h1>
+        <p className="text-slate-500 mt-1">檢視平台所有面試活動、活躍使用者與系統健康度。（僅管理員可存取）</p>
       </div>
       {/* KPI cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

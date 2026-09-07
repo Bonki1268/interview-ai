@@ -116,42 +116,42 @@ export default function InterviewPage() {
   };
 
   if (!interviewData) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
       <div className="text-center">
         <Loader2 size={40} className="animate-spin text-teal-600 mx-auto mb-4" />
-        <p className="text-gray-600">正在從資料庫載入面試題目與參數...</p>
+        <p className="text-slate-600">正在從資料庫載入面試題目與參數...</p>
       </div>
     </div>
   );
 
   const cq = interviewData.questions[qIdx];
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <header className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2"><Sparkles size={20} className="text-teal-600" /><h1 className="text-lg font-semibold text-gray-900">核心面試現場</h1></div>
-            <p className="text-sm text-gray-500 mt-0.5">模擬面試進行中 — 請保持放鬆，自然回答。</p>
+            <div className="flex items-center gap-2"><Sparkles size={20} className="text-teal-600" /><h1 className="text-lg font-semibold text-slate-900">核心面試現場</h1></div>
+            <p className="text-sm text-slate-500 mt-0.5">模擬面試進行中 — 請保持放鬆，自然回答。</p>
           </div>
-          <span className={`text-sm font-medium ${isRec ? 'text-red-500 recording-pulse' : 'text-gray-500'}`}>{recStatus}</span>
+          <span className={`text-sm font-medium ${isRec ? 'text-red-500 recording-pulse' : 'text-slate-500'}`}>{recStatus}</span>
         </div>
       </header>
       <div className="max-w-4xl mx-auto px-6 py-12">
         {isProc ? (
           <div className="flex flex-col items-center py-20">
             <div className="w-16 h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mb-6" />
-            <p className="text-lg font-medium text-gray-700">處理解答中，請稍候...</p>
-            <p className="text-sm text-gray-400 mt-2">AI 正在分析您的回答並進行評分</p>
+            <p className="text-lg font-medium text-slate-700">處理解答中，請稍候...</p>
+            <p className="text-sm text-slate-400 mt-2">AI 正在分析您的回答並進行評分</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
             <div className="px-8 pt-6 flex items-center justify-between">
               <span className="text-sm font-semibold text-teal-600">題目 {qIdx + 1} / {interviewData.questions.length}</span>
               <span className={`text-sm font-bold ${timeLeft <= 10 ? 'text-red-500' : 'text-red-400'}`}>倒數時間: {timeLeft} 秒</span>
             </div>
-            <div className="px-8 mt-3"><div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-teal-600 rounded-full transition-all duration-300" style={{ width: `${((qIdx + 1) / interviewData.questions.length) * 100}%` }} /></div></div>
-            <div className="px-8 py-10"><h2 className="text-xl font-bold text-gray-900 text-center leading-relaxed">[第 {qIdx + 1} 題] {cq.question_text}</h2></div>
-            <div className="px-8 pb-6"><div className="flex items-end justify-center gap-1 h-12">{levels.map((l, i) => (<div key={i} className={`w-1.5 rounded-full transition-all duration-100 ${isRec ? 'bg-teal-500' : 'bg-gray-200'}`} style={{ height: `${l}px` }} />))}</div></div>
+            <div className="px-8 mt-3"><div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-teal-600 rounded-full transition-all duration-300" style={{ width: `${((qIdx + 1) / interviewData.questions.length) * 100}%` }} /></div></div>
+            <div className="px-8 py-10"><h2 className="text-xl font-bold text-slate-900 text-center leading-relaxed">[第 {qIdx + 1} 題] {cq.question_text}</h2></div>
+            <div className="px-8 pb-6"><div className="flex items-end justify-center gap-1 h-12">{levels.map((l, i) => (<div key={i} className={`w-1.5 rounded-full transition-all duration-100 ${isRec ? 'bg-teal-500' : 'bg-slate-200'}`} style={{ height: `${l}px` }} />))}</div></div>
             <div className="px-8 pb-8 flex justify-center gap-4">
               {!isRec ? (
                 <Button onClick={startRecording} className="px-8 py-3" disabled={isProc}><Mic size={18} className="mr-2" />開始回答</Button>

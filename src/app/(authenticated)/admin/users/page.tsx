@@ -38,28 +38,28 @@ export default function UsersPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">使用者帳限控制</h1>
-          <p className="text-gray-500 mt-1">直接在系統內新增帳號。系統已封閉公開註冊，必須經由管理員發放權限。</p>
+          <h1 className="text-2xl font-bold text-slate-900">使用者帳限控制</h1>
+          <p className="text-slate-500 mt-1">直接在系統內新增帳號。系統已封閉公開註冊，必須經由管理員發放權限。</p>
         </div>
         <Button onClick={openCreate}><UserPlus size={16} className="mr-2" />新增使用者</Button>
       </div>
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead><tr className="border-b border-gray-200">
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">姓名 / 信箱</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">角色權限</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">狀態</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">加入時間</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">操作</th>
+            <thead><tr className="border-b border-slate-200">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">姓名 / 信箱</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">角色權限</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">狀態</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">加入時間</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">操作</th>
             </tr></thead>
             <tbody>
               {users.map(u => (
-                <tr key={u.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-4"><p className="font-medium text-gray-900">{u.name}</p><p className="text-xs text-gray-400">{u.email}</p></td>
+                <tr key={u.id} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="py-3 px-4"><p className="font-medium text-slate-900">{u.name}</p><p className="text-xs text-slate-400">{u.email}</p></td>
                   <td className="py-3 px-4"><Badge variant={u.role === 'admin' ? 'danger' : 'info'}>{u.role === 'admin' ? '管理員' : '一般使用者'}</Badge></td>
-                  <td className="py-3 px-4"><span className="flex items-center gap-1.5 text-sm"><span className={`w-2 h-2 rounded-full ${u.status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`} /><span className={u.status === 'active' ? 'text-green-600' : 'text-gray-400'}>{u.status === 'active' ? '啟用中' : '已停用'}</span></span></td>
-                  <td className="py-3 px-4 text-sm text-gray-600">{formatDate(u.created_at)}</td>
+                  <td className="py-3 px-4"><span className="flex items-center gap-1.5 text-sm"><span className={`w-2 h-2 rounded-full ${u.status === 'active' ? 'bg-green-500' : 'bg-slate-300'}`} /><span className={u.status === 'active' ? 'text-green-600' : 'text-slate-400'}>{u.status === 'active' ? '啟用中' : '已停用'}</span></span></td>
+                  <td className="py-3 px-4 text-sm text-slate-600">{formatDate(u.created_at)}</td>
                   <td className="py-3 px-4"><Button size="sm" variant="ghost" onClick={() => openEdit(u)}><Pencil size={14} className="mr-1" />編輯</Button></td>
                 </tr>
               ))}

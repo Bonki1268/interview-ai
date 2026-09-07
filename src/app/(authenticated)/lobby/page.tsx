@@ -101,8 +101,8 @@ export default function LobbyPage() {
 
       {/* Page header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">面試準備大廳</h1>
-        <p className="text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-slate-900">面試準備大廳</h1>
+        <p className="text-slate-500 mt-1">
           透過 AI 精準分析職缺內容，為您量身打造最高效率的模擬面試訓練。
         </p>
       </div>
@@ -124,11 +124,11 @@ export default function LobbyPage() {
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               />
               {showSuggestions && filteredSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-10">
                   {filteredSuggestions.map((s, i) => (
                     <button
                       key={i}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-teal-50 hover:text-teal-700 transition-colors cursor-pointer"
                       onClick={() => {
                         setPosition(s);
                         setShowSuggestions(false);
@@ -153,7 +153,7 @@ export default function LobbyPage() {
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
             />
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-slate-400 mt-2">
               AI 將自動擷取關鍵職能並生成對應題目
             </p>
           </Card>
@@ -166,8 +166,8 @@ export default function LobbyPage() {
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <label className="text-sm font-medium text-gray-700">題目數量</label>
-                  {userRole === 'user' && <Lock size={12} className="text-gray-400" />}
+                  <label className="text-sm font-medium text-slate-700">題目數量</label>
+                  {userRole === 'user' && <Lock size={12} className="text-slate-400" />}
                 </div>
                 <Select
                   value={questionCount}
@@ -186,8 +186,8 @@ export default function LobbyPage() {
 
               <div>
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <label className="text-sm font-medium text-gray-700">每題時間（秒）</label>
-                  {userRole === 'user' && <Lock size={12} className="text-gray-400" />}
+                  <label className="text-sm font-medium text-slate-700">每題時間（秒）</label>
+                  {userRole === 'user' && <Lock size={12} className="text-slate-400" />}
                 </div>
                 <Input
                   type="number"
@@ -201,8 +201,8 @@ export default function LobbyPage() {
 
               <div>
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <label className="text-sm font-medium text-gray-700">面試語言</label>
-                  {userRole === 'user' && <Lock size={12} className="text-gray-400" />}
+                  <label className="text-sm font-medium text-slate-700">面試語言</label>
+                  {userRole === 'user' && <Lock size={12} className="text-slate-400" />}
                 </div>
                 <Select
                   value={language}

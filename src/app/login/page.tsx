@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -66,30 +66,44 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">電子郵件</label>
+              <label htmlFor="login-email" className="block text-sm font-medium text-slate-300 mb-1.5">電子郵件</label>
               <input
+                id="login-email"
                 type="email"
                 placeholder="name@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
                 className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">密碼</label>
-              <input
-                type="password"
-                placeholder="請輸入密碼"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-              />
+              <label htmlFor="login-password" className="block text-sm font-medium text-slate-300 mb-1.5">密碼</label>
+              <div className="relative">
+                <input
+                  id="login-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="請輸入密碼"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="w-full px-4 py-2.5 pr-11 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? '隱藏密碼' : '顯示密碼'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 rounded"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg p-3">
+              <div role="alert" className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg p-3">
                 {error}
               </div>
             )}
@@ -102,8 +116,6 @@ export default function LoginPage() {
               登入
             </Button>
           </form>
-
-
         </div>
 
         {/* Demo credentials hint */}
