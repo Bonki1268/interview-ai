@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import OpenAI, { toFile } from 'openai';
 
 const API_KEYS = [
   process.env.OPENAI_API_KEY_1 || '',
@@ -58,7 +58,7 @@ export async function generateInterviewQuestions(
 export async function transcribeAudio(audioBuffer: Buffer, filename: string): Promise<string> {
   const client = getOpenAIClient();
 
-  const file = new File([audioBuffer], filename, { type: 'audio/webm' });
+  const file = await toFile(audioBuffer, filename, { type: 'audio/webm' });
 
   const response = await client.audio.transcriptions.create({
     model: 'whisper-1',
