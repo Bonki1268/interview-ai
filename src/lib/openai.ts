@@ -1,4 +1,5 @@
 import OpenAI, { toFile } from 'openai';
+import { logApiUsage } from './apiUsage';
 
 const API_KEYS = [
   process.env.OPENAI_API_KEY_1 || '',
@@ -7,13 +8,14 @@ const API_KEYS = [
 
 let currentKeyIndex = 0;
 
-export function getOpenAIClient(): OpenAI {
+function getOpenAIClientWithLabel(): { client: OpenAI; keyLabel: string } {
   if (API_KEYS.length === 0) {
     throw new Error('No OpenAI API keys configured');
   }
-  const key = API_KEYS[currentKeyIndex % API_KEYS.length];
+  const index = currentKeyIndex % API_KEYS.length;
+  const key = API_KEYS[index];
   currentKeyIndex++;
-  return new OpenAI({ apiKey: key });
+  return { client: new OpenAI({ apiKey: key }), keyLabel: `Key ${index + 1}` };
 }
 
 export async function generateInterviewQuestions(
@@ -22,7 +24,7 @@ export async function generateInterviewQuestions(
   questionCount: number,
   language: string
 ): Promise<string[]> {
-  const client = getOpenAIClient();
+  const { client, keyLabel } = getOpenAIClientWithLabel();
 
   const response = await client.chat.completions.create({
     model: 'gpt-4o',
@@ -46,6 +48,14 @@ export async function generateInterviewQuestions(
     max_tokens: 2000,
   });
 
+  logApiUsage({
+    keyLabel,
+    operation: 'generate_questions',
+    model: response.model || 'gpt-4o',
+    promptTokens: response.usage?.prompt_tokens,
+    completionTokens: response.usage?.completion_tokens,
+  });
+
   const content = response.choices[0]?.message?.content || '[]';
   try {
     const cleaned = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
@@ -56,7 +66,7 @@ export async function generateInterviewQuestions(
 }
 
 export async function transcribeAudio(audioBuffer: Buffer, filename: string): Promise<string> {
-  const client = getOpenAIClient();
+  const { client, keyLabel } = getOpenAIClientWithLabel();
 
   const file = await toFile(audioBuffer, filename, { type: 'audio/webm' });
 
@@ -66,6 +76,13 @@ export async function transcribeAudio(audioBuffer: Buffer, filename: string): Pr
     language: 'zh',
     response_format: 'verbose_json',
     timestamp_granularities: ['segment'],
+  });
+
+  logApiUsage({
+    keyLabel,
+    operation: 'transcribe',
+    model: 'whisper-1',
+    audioSeconds: response.duration,
   });
 
   // Format with timestamps
@@ -97,7 +114,7 @@ export async function evaluateInterview(
   radarLogic: number;
   questionScores: number[];
 }> {
-  const client = getOpenAIClient();
+  const { client, keyLabel } = getOpenAIClientWithLabel();
 
   const weightDesc = scoringWeights.map(w => `${w.name}(${w.weight}%)`).join('、');
 
@@ -134,6 +151,14 @@ export async function evaluateInterview(
     ],
     temperature: 0.3,
     max_tokens: 2000,
+  });
+
+  logApiUsage({
+    keyLabel,
+    operation: 'evaluate',
+    model: response.model || 'gpt-4o',
+    promptTokens: response.usage?.prompt_tokens,
+    completionTokens: response.usage?.completion_tokens,
   });
 
   const content = response.choices[0]?.message?.content || '';

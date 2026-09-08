@@ -13,6 +13,7 @@ import {
   FileText,
   LogOut,
   GraduationCap,
+  Gauge,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -31,6 +32,7 @@ const adminMenuItems = [
   { href: '/admin/dashboard', label: '系統營運總覽', icon: LayoutDashboard },
   { href: '/admin/users', label: '使用者權限控制', icon: Users },
   { href: '/admin/ai-config', label: 'AI 評分模型配置', icon: Brain },
+  { href: '/admin/usage', label: 'API 用量監控', icon: Gauge },
   { href: '/admin/audit', label: '面試詳細稽核', icon: ClipboardList },
   { href: '/admin/settings', label: '系統核心參數', icon: Settings },
 ];

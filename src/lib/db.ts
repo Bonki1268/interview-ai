@@ -63,6 +63,21 @@ function initializeDatabase(db: Database.Database) {
       value TEXT NOT NULL,
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS api_usage_logs (
+      id TEXT PRIMARY KEY,
+      key_label TEXT NOT NULL,
+      operation TEXT NOT NULL,
+      model TEXT NOT NULL,
+      prompt_tokens INTEGER NOT NULL DEFAULT 0,
+      completion_tokens INTEGER NOT NULL DEFAULT 0,
+      total_tokens INTEGER NOT NULL DEFAULT 0,
+      audio_seconds REAL NOT NULL DEFAULT 0,
+      estimated_cost_usd REAL NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_api_usage_logs_created_at ON api_usage_logs(created_at);
   `);
 
   // Seed default data if empty
@@ -98,11 +113,24 @@ function initializeDatabase(db: Database.Database) {
         { name: '表達自信', weight: 30 },
       ])],
       ['pass_threshold', '60'],
+      ['monthly_budget_usd', '50'],
+      ['openai_admin_api_key', ''],
+      ['openai_organization_id', ''],
     ];
 
     const stmt = db.prepare('INSERT INTO system_config (key, value) VALUES (?, ?)');
     for (const [key, value] of defaultConfigs) {
       stmt.run(key, value);
     }
+  }
+
+  // Backfill config keys introduced after initial seeding (existing installs)
+  const upsertIfMissing = db.prepare('INSERT OR IGNORE INTO system_config (key, value) VALUES (?, ?)');
+  for (const [key, value] of [
+    ['monthly_budget_usd', '50'],
+    ['openai_admin_api_key', ''],
+    ['openai_organization_id', ''],
+  ]) {
+    upsertIfMissing.run(key, value);
   }
 }
