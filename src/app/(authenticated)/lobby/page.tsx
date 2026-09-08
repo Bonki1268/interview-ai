@@ -18,6 +18,7 @@ export default function LobbyPage() {
   const [userRole, setUserRole] = useState<string>('user');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [assignment, setAssignment] = useState<{ position: string; jobDescription: string; dueAt: string | null; isExpired: boolean } | null>(null);
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -29,21 +30,37 @@ export default function LobbyPage() {
       })
       .catch(() => {});
 
+    fetch('/api/interview/assignment')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.assignment) {
+          setAssignment(data.assignment);
+          setPosition(data.assignment.position);
+          setJobDescription(data.assignment.jobDescription);
+        }
+      })
+      .catch(() => {});
+
     // Load position history from localStorage
     const history = JSON.parse(localStorage.getItem('position_history') || '[]');
     setSuggestions(history);
   }, []);
 
+  const isLocked = !!assignment && !assignment.isExpired;
+
   const handleStartInterview = async () => {
     if (!position.trim() || !jobDescription.trim()) return;
+    if (assignment?.isExpired) return;
 
     setLoading(true);
 
-    // Save position to history
-    const history = JSON.parse(localStorage.getItem('position_history') || '[]');
-    if (!history.includes(position)) {
-      history.unshift(position);
-      localStorage.setItem('position_history', JSON.stringify(history.slice(0, 10)));
+    if (!isLocked) {
+      // Save position to history (only meaningful for free-form entry)
+      const history = JSON.parse(localStorage.getItem('position_history') || '[]');
+      if (!history.includes(position)) {
+        history.unshift(position);
+        localStorage.setItem('position_history', JSON.stringify(history.slice(0, 10)));
+      }
     }
 
     try {
@@ -99,6 +116,25 @@ export default function LobbyPage() {
         </div>
       )}
 
+      {/* Assignment lock notice */}
+      {assignment && !assignment.isExpired && (
+        <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mb-6 flex items-center gap-2">
+          <Lock size={16} className="text-teal-600 flex-shrink-0" />
+          <span className="text-sm text-teal-700">
+            此職位已由管理員指定為「{assignment.position}」，如需變更請聯繫管理員。
+            {assignment.dueAt && ` 截止日期：${new Date(assignment.dueAt).toLocaleDateString('zh-TW')}`}
+          </span>
+        </div>
+      )}
+      {assignment?.isExpired && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6 flex items-center gap-2">
+          <Lock size={16} className="text-red-500 flex-shrink-0" />
+          <span className="text-sm text-red-700">
+            此職位指派已過期，請聯繫管理員重新指派後再開始面試。
+          </span>
+        </div>
+      )}
+
       {/* Page header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">面試準備大廳</h1>
@@ -116,6 +152,7 @@ export default function LobbyPage() {
               <Input
                 placeholder="例如：資深前端工程師 / 產品經理 / 行銷企劃..."
                 value={position}
+                disabled={isLocked}
                 onChange={(e) => {
                   setPosition(e.target.value);
                   setShowSuggestions(true);
@@ -123,7 +160,7 @@ export default function LobbyPage() {
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               />
-              {showSuggestions && filteredSuggestions.length > 0 && (
+              {!isLocked && showSuggestions && filteredSuggestions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-10">
                   {filteredSuggestions.map((s, i) => (
                     <button
@@ -151,6 +188,7 @@ export default function LobbyPage() {
               rows={10}
               placeholder="請貼上目標職位的詳細說明，包含：主要職責、所需技能、加分條件等。AI 將根據 JD 自動產生針對性面試題目。"
               value={jobDescription}
+              disabled={isLocked}
               onChange={(e) => setJobDescription(e.target.value)}
             />
             <p className="text-xs text-slate-400 mt-2">
@@ -221,7 +259,7 @@ export default function LobbyPage() {
           {/* Start interview button */}
           <button
             onClick={handleStartInterview}
-            disabled={loading || !position.trim() || !jobDescription.trim()}
+            disabled={loading || !position.trim() || !jobDescription.trim() || !!assignment?.isExpired}
             className="w-full py-3.5 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-teal-500/25 hover:shadow-teal-400/30 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer text-base"
           >
             {loading ? (

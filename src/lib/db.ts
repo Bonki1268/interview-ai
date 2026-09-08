@@ -42,9 +42,37 @@ function initializeDatabase(db: Database.Database) {
       language TEXT DEFAULT '繁體中文',
       question_count INTEGER DEFAULT 3,
       question_time_limit INTEGER DEFAULT 60,
+      assignment_id TEXT,
       started_at TEXT NOT NULL DEFAULT (datetime('now')),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY (user_id) REFERENCES users(id)
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (assignment_id) REFERENCES interview_assignments(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS interview_assignments (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      position TEXT NOT NULL,
+      job_description TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'cancelled', 'expired')),
+      due_at TEXT,
+      assigned_by TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (assigned_by) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_assignments_user_status ON interview_assignments(user_id, status);
+
+    CREATE TABLE IF NOT EXISTS position_templates (
+      id TEXT PRIMARY KEY,
+      position TEXT NOT NULL,
+      job_description TEXT NOT NULL,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (created_by) REFERENCES users(id)
     );
 
     CREATE TABLE IF NOT EXISTS interview_questions (
@@ -132,5 +160,11 @@ function initializeDatabase(db: Database.Database) {
     ['openai_organization_id', ''],
   ]) {
     upsertIfMissing.run(key, value);
+  }
+
+  // Migrate existing installs: add assignment_id column if it predates this feature
+  const interviewColumns = db.prepare('PRAGMA table_info(interviews)').all() as { name: string }[];
+  if (!interviewColumns.some((c) => c.name === 'assignment_id')) {
+    db.exec('ALTER TABLE interviews ADD COLUMN assignment_id TEXT REFERENCES interview_assignments(id)');
   }
 }

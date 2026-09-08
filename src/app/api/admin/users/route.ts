@@ -8,7 +8,13 @@ export async function GET() {
   try {
     await requireAdmin();
     const db = getDb();
-    const users = db.prepare('SELECT id, name, email, role, status, created_at FROM users ORDER BY created_at DESC').all();
+    const users = db.prepare(`
+      SELECT u.id, u.name, u.email, u.role, u.status, u.created_at,
+             a.position AS assigned_position, a.due_at AS assigned_due_at
+      FROM users u
+      LEFT JOIN interview_assignments a ON a.user_id = u.id AND a.status = 'active'
+      ORDER BY u.created_at DESC
+    `).all();
     return NextResponse.json({ users });
   } catch {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

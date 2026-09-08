@@ -14,6 +14,7 @@ import {
   LogOut,
   GraduationCap,
   Gauge,
+  Briefcase,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -31,6 +32,7 @@ const userMenuItems = [
 const adminMenuItems = [
   { href: '/admin/dashboard', label: '系統營運總覽', icon: LayoutDashboard },
   { href: '/admin/users', label: '使用者權限控制', icon: Users },
+  { href: '/admin/positions', label: '職位範本管理', icon: Briefcase },
   { href: '/admin/ai-config', label: 'AI 評分模型配置', icon: Brain },
   { href: '/admin/usage', label: 'API 用量監控', icon: Gauge },
   { href: '/admin/audit', label: '面試詳細稽核', icon: ClipboardList },
